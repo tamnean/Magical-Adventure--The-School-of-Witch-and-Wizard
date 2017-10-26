@@ -14,87 +14,211 @@ using UnityEngine.Purchasing.Security;
 
 public class IAP_Wizard : MonoBehaviour
 {
-	GameObject buySuccessPanel;
-	GameObject fireWorkEffect;
+	public Text keyNumberText;
+	public GameObject buySuccessPanel;
+	public GameObject fireWorkEffect;
+	public GameObject buyFailPanel;
+	[Space]
+	public Button windrunButton;
+	public Button meteoritesButton;
+	public Button fireballButton;
+	public Button lightningstormButton;
+	public Button lightninglanceButton;
+	public Button unlockStageButton;
+	public Button adRemoveButton;
 
 	void OnEnable()
 	{            
 		IAPManager.PurchaseCompleted += IAPManager_PurchaseCompleted;
 		IAPManager.PurchaseFailed += IAPManager_PurchaseFailed;
-		IAPManager.RestoreCompleted += IAPManager_RestoreCompleted;
 	}
 
 	void OnDisable()
 	{
 		IAPManager.PurchaseCompleted -= IAPManager_PurchaseCompleted;
 		IAPManager.PurchaseFailed -= IAPManager_PurchaseFailed;   
-		IAPManager.RestoreCompleted -= IAPManager_RestoreCompleted;
 	}
 
 	void IAPManager_PurchaseCompleted(IAPProduct product)
 	{
+		//if produc.name  - google first-
+		if (product.Name == "Key x 100") 
+		{
+			int keyNumber = PlayerPrefs.GetInt ("Key", 0);
+			keyNumber += 100;
+			keyNumberText.text = "" + keyNumber;
+			PlayerPrefs.SetInt ("Key", keyNumber);
+		}
+		else if (product.Name == "Key x 200") 
+		{
+			int keyNumber = PlayerPrefs.GetInt ("Key", 0);
+			keyNumber += 200;
+			keyNumberText.text = "" + keyNumber;
+			PlayerPrefs.SetInt ("Key", keyNumber);
+		}
+		else if (product.Name == "Key x 400")
+		{
+			int keyNumber = PlayerPrefs.GetInt ("Key", 0);
+			keyNumber += 400;
+			keyNumberText.text = "" + keyNumber;
+			PlayerPrefs.SetInt ("Key", keyNumber);
+		}
+		else if (product.Name == "Remove Ad") 
+		{
+			AdManager.RemoveAds();
+		}
+		else if (product.Name == "Unlock all stages") 
+		{
+			PlayerPrefs.SetInt ("LevelPassed", 26); //pass 26 mean 27 unlock
+		}
+
 		buySuccessPanel.SetActive (true);
 		fireWorkEffect.SetActive (true);
 	}
 
 	void IAPManager_PurchaseFailed(IAPProduct product)
 	{
+		buyFailPanel.SetActive (true);
 	}
-
-	void IAPManager_RestoreCompleted()
-	{
-	}
-
+		
 	void Awake()
 	{
-		buySuccessPanel = GameObject.Find ("BuySuccessPanel");
-		fireWorkEffect = GameObject.Find ("Firework");
+		int keyNumber = PlayerPrefs.GetInt ("Key", 0);
+		keyNumberText.text = "" + keyNumber;
+
 		buySuccessPanel.SetActive (false);
 		fireWorkEffect.SetActive (false);
+		buyFailPanel.SetActive (false);
 
+		if (PlayerPrefs.GetString ("WWWBought", "false") == "true" || keyNumber < 100)
+			windrunButton.interactable = false;
+		if (PlayerPrefs.GetString ("FFFBought", "false") == "true" || keyNumber < 140)
+			meteoritesButton.interactable = false;
+		if (PlayerPrefs.GetString ("FFLBought", "false") == "true" || keyNumber < 120)
+			fireballButton.interactable = false;
+		if (PlayerPrefs.GetString ("LLLBought", "false") == "true" || keyNumber < 120)
+			lightningstormButton.interactable = false;
+		if (PlayerPrefs.GetString ("LLFBought", "false") == "true" || keyNumber < 140)
+			lightninglanceButton.interactable = false;
+		if (AdManager.IsAdRemoved ())
+			adRemoveButton.interactable = false;
+		if (PlayerPrefs.GetInt ("LevelPassed", 0) >= 27)
+			unlockStageButton.interactable = false;
 	}
 		
-
-	public void DonateSuccessOkClick()
+	public void BuySuccessFailOkClick() // seperate method all Item
 	{
 		buySuccessPanel.SetActive (false);
+		fireWorkEffect.SetActive (false);
+		buyFailPanel.SetActive (false);
+		SceneManager.LoadScene ("Shop");
 	}
 		
-
-	public void Donate_Least()
+	public void WindrunUpgrade()
 	{
-		IAPManager.Purchase (EM_IAPConstants.Product_Least_Donation);
+		int keyNumber = PlayerPrefs.GetInt ("Key", 0);
+		if (keyNumber >= 100) 
+		{
+			keyNumber -= 100;
+			keyNumberText.text = "" + keyNumber;
+			PlayerPrefs.SetInt ("Key", keyNumber);
+			PlayerPrefs.SetString ("WWWBought", "true");
+			PlayerPrefs.SetInt("WindrunTime",18);
+
+			buySuccessPanel.SetActive (true);
+			fireWorkEffect.SetActive (true);
+		}
+
 	}
 
-	public void Donate_Less()
+	public void MeteoritesUpgrade()
 	{
-		IAPManager.Purchase (EM_IAPConstants.Product_Less_Donation);
+		int keyNumber = PlayerPrefs.GetInt ("Key", 0);
+		if (keyNumber >= 140)
+		{
+			keyNumber -= 140;
+			keyNumberText.text = "" + keyNumber;
+			PlayerPrefs.SetInt ("Key", keyNumber);
+			PlayerPrefs.SetString ("FFFBought", "true");
+			PlayerPrefs.SetInt ("Meteorites", 14);
+
+			buySuccessPanel.SetActive (true);
+			fireWorkEffect.SetActive (true);
+		}
 	}
 
-	public void Donate_Little()
+	public void FireballUpgrade()
 	{
-		IAPManager.Purchase (EM_IAPConstants.Product_Little_Donation);
+		int keyNumber = PlayerPrefs.GetInt ("Key", 0);
+		if (keyNumber >= 120) 
+		{
+			keyNumber -= 120;
+			keyNumberText.text = "" + keyNumber;
+			PlayerPrefs.SetInt ("Key", keyNumber);
+			PlayerPrefs.SetString ("FFLBought", "true");
+			PlayerPrefs.SetInt ("Fireball", 3);
+
+			buySuccessPanel.SetActive (true);
+			fireWorkEffect.SetActive (true);
+		}
 	}
 
-	public void Donate_Much()
+	public void LightningstormUpgrade()
 	{
-		IAPManager.Purchase (EM_IAPConstants.Product_Much_Donation);
+		int keyNumber = PlayerPrefs.GetInt ("Key", 0);
+		if (keyNumber >= 120)
+		{
+			keyNumber -= 120;
+			keyNumberText.text = "" + keyNumber;
+			PlayerPrefs.SetInt ("Key", keyNumber);
+			PlayerPrefs.SetString ("LLLBought", "true");
+			PlayerPrefs.SetInt ("Lightningstorm", 48);
+
+			buySuccessPanel.SetActive (true);
+			fireWorkEffect.SetActive (true);
+		}
 	}
 
-	public void Donate_More()
+	public void LightninglanceUpgrade()
 	{
-		IAPManager.Purchase (EM_IAPConstants.Product_More_Donation);
+		int keyNumber = PlayerPrefs.GetInt ("Key", 0);
+		if (keyNumber >= 140)
+		{
+			keyNumber -= 140;
+			keyNumberText.text = "" + keyNumber;
+			PlayerPrefs.SetInt ("Key", keyNumber);
+			PlayerPrefs.SetString ("LLFBought", "true");
+			PlayerPrefs.SetInt ("Lightninglance", 3);
+
+			buySuccessPanel.SetActive (true);
+			fireWorkEffect.SetActive (true);
+		}
 	}
 
-	public void Donate_Most()
+	public void Key100()
 	{
-		IAPManager.Purchase (EM_IAPConstants.Product_Most_Donation);
+		IAPManager.Purchase (EM_IAPConstants.Product_Key_x_100);
 	}
 
-		
+	public void Key200()
+	{
+		IAPManager.Purchase (EM_IAPConstants.Product_Key_x_200);
+	}
 
+	public void Key400()
+	{
+		IAPManager.Purchase (EM_IAPConstants.Product_Key_x_400);
+	}
 
+	public void RemoveAds()
+	{
+		//only interstitial
+		IAPManager.Purchase (EM_IAPConstants.Product_Remove_Ad);
+	}
 
-		
+	public void UnlockAllLevel()
+	{
+		IAPManager.Purchase (EM_IAPConstants.Product_Unlock_all_stages);
+	}
 }
 

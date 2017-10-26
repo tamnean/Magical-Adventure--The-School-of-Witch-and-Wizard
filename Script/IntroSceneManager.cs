@@ -15,7 +15,6 @@ public class IntroSceneManager : MonoBehaviour
 
 	void Start()
 	{
-		PlayerPrefs.GetInt ("LevelPassed", 0);
 		Invoke ("ClickableDelay", 0.5f);
 	}
 

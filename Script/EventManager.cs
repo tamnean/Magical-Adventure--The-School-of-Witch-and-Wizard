@@ -11,14 +11,14 @@ public class EventManager : MonoBehaviour
 	public class PlayerPassEvent : UnityEvent{}
 	public class EnemyTakeDamageEvent : UnityEvent<GameObject,float>{}
 	public class MagicPerformEvent : UnityEvent<string>{}
-	public class AfterAdEvent : UnityEvent<string>{}
+	public class AfterAdEvent : UnityEvent{}
 
 
 	public static PlayerDieEvent PlayerDie = new PlayerDieEvent ();
-	public static CheckPoint GoalCheckPoint = new CheckPoint();
 	public static PlayerPassEvent PlayerPass = new PlayerPassEvent();
 	public static EnemyTakeDamageEvent EnemyTakeDamage = new EnemyTakeDamageEvent();
 	public static MagicPerformEvent MagicCast = new MagicPerformEvent();
-	public static AfterAdEvent AfterAds = new AfterAdEvent ();
+	public static AfterAdEvent AfterRewardAd = new AfterAdEvent ();
+	public static AfterAdEvent AfterRelifeAd = new AfterAdEvent();
 
 }
